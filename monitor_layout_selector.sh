@@ -94,8 +94,19 @@ function gen_entries()
     done
 }
 
+if [[ "$backend" == "simpleswitcher" ]]
+    then function dmenu_t () {
+            simpleswitcher -dmenu
+        }
+
+elif [[ "$backend" == "dmenu" ]]
+    then function dmenu_t () {
+            dmenu -l 15 -fn "$font" -nf "$nf" -nb "$nb" -sf "$sf" -sb "$sb" -o 90
+       }
+fi
+
 # Call menu
-SEL=$( gen_entries | simpleswitcher -p "Monitor:" -dmenu | awk '{print $1}' )
+SEL=$( gen_entries | dmenu_t -p "Monitor:" | awk '{print $1}' )
 
 # Call xrandr
 $( ${COMMANDS[$SEL]} )

@@ -1,8 +1,10 @@
 #!/bin/bash
 
+WIDTH=1980
+
 BG_SET_CMD="MultiMonitorBackground -clip -input"
 PURITY=sfw
-EXCLUDE_TAGS=( 'woman' 'anime' 'anime-girls' )
+EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' )
 
 URL="http://wallgig.net/?order=random&per_page=5&purity\[\]=${PURITY}"
 
@@ -10,6 +12,12 @@ for ET in ${EXCLUDE_TAGS[@]}
 do
     URL="${URL}&exclude_tags\[\]=${ET}"
 done
+
+if [ -n ${WIDTH} ]
+then
+    URL="${URL}&width=${WIDTH}"
+fi
+
 
 echo "Fetching url: ${URL}"
 # Get list of IDS

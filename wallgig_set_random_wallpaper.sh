@@ -15,8 +15,15 @@ WIDTH=$(xininfo --max-mon-width)
 BG_SET_CMD="MultiMonitorBackground -clip -input"
 CURL="curl "
 PURITY=sfw
-EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' )
 
+##
+# Stuff we do not want to see
+##
+EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' )
+
+##
+# Stuff we do want to see
+##
 TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' )
 
 URL="http://wallgig.net/?order=random&per_page=40&purity\[\]=${PURITY}"

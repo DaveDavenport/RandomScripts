@@ -1,5 +1,7 @@
 #!/bin/bash
 
+backend=simpleswitcher
+
 source ~/.config/dmenurc
 
 XRANDR=$(which xrandr)

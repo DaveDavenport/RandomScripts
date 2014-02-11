@@ -6,12 +6,21 @@ BG_SET_CMD="MultiMonitorBackground -clip -input"
 PURITY=sfw
 EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' )
 
+TAGS=( 'nature' 'road' 'forest' 'cities' 'landscapes' )
+
 URL="http://wallgig.net/?order=random&per_page=5&purity\[\]=${PURITY}"
 
 for ET in ${EXCLUDE_TAGS[@]}
 do
     URL="${URL}&exclude_tags\[\]=${ET}"
 done
+
+if [ "${#TAGS[@]}" -gt 0 ]
+then
+    RIMG=$(( ${RANDOM} % ${#TAGS[@]}))
+    ET=${TAGS[ ${RIMG}] }
+    URL="${URL}&tags\[\]=${ET}"
+fi
 
 if [ -n ${WIDTH} ]
 then

@@ -10,6 +10,10 @@
 #       Install: https://github.com/DaveDavenport/xininfo
 ##
 
+
+CACHE_DIR=~/.cache/wallgig/
+
+
 WIDTH=$(xininfo --max-mon-width)
 
 BG_SET_CMD="MultiMonitorBackground -clip -input"
@@ -19,12 +23,20 @@ PURITY=sfw
 ##
 # Stuff we do not want to see
 ##
-EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' )
+EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' 'car' )
 
 ##
 # Stuff we do want to see
 ##
 TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' )
+
+
+if [ -n "${CACHE_DIR}" ] && [ ! -d ${CACHE_DIR} ]
+then
+    mkdir -p "${CACHE_DIR}"
+fi
+
+
 
 URL="http://wallgig.net/?order=random&per_page=40&purity\[\]=${PURITY}"
 
@@ -38,6 +50,7 @@ then
     RIMG=$(( ${RANDOM} % ${#TAGS[@]}))
     ET=${TAGS[ ${RIMG}] }
     URL="${URL}&tags\[\]=${ET}"
+    echo "Selected tag: ${TAGS[${RIMG}]}"
 fi
 
 if [ -n ${WIDTH} ]
@@ -46,13 +59,9 @@ then
 fi
 
 
-echo "Fetching url: ${URL}"
+echo "Fetching list of images." 
 # Get list of IDS
-IDS=( $(${CURL} "$URL" | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
-
-
-#list ids
-echo ${IDS[@]}
+IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
 
 # Check results
 if [ ${#IDS[@]} -eq 0 ]
@@ -61,6 +70,7 @@ then
     exit 1;
 fi
 
+echo "Got ${#IDS[@]} images."
 
 SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
 
@@ -69,13 +79,25 @@ echo ${IDS[${SELECTED_IMAGE}]} >> previous_ids
 URL="http://wallgig.net/wallpapers/${IDS[${SELECTED_IMAGE}]}/"
 
 # Get wallpaper url
-echo Fetching url: ${URL}
-WP_PATH=$(${CURL} "$URL" | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
+echo Fetching location for image id: ${IDS[${SELECTED_IMAGE}]}
+WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
 
-echo WP_PATH: ${WP_PATH}
 
-if [ -n "${WP_PATH}" ]
+if [ -n "${CACHE_DIR}" ]
 then
-    ${CURL} "${WP_PATH}" -o wallpaper.jpg
-    ${BG_SET_CMD} wallpaper.jpg
+    CACHE_FILE="${CACHE_DIR}/${IDS[${SELECTED_IMAGE}]}.jpg"
+
+    if [ -f ${CACHE_FILE} ]
+    then
+        echo Get image from cache: ${CACHE_FILE}
+        ${BG_SET_CMD} ${CACHE_FILE} 
+    elif [ -n "${WP_PATH}" ]
+    then
+        echo Get image: ${WP_PATH}
+        ${CURL} "${WP_PATH}" -o ${CACHE_FILE} 2>/dev/null
+        ${BG_SET_CMD} ${CACHE_FILE} 
+    fi
+else 
+    ${CURL} "${WP_PATH}" -o /tmp/wallpaper.jpg 2>/dev/null
+    ${BG_SET_CMD} /tmp/wallpaper.jpg 
 fi

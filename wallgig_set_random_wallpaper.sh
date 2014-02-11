@@ -1,6 +1,16 @@
 #!/bin/bash
 
-WIDTH=1920
+##
+# Script uses the following external tools:
+# Curl: To fetch data from the interwebs
+#       Install: See package manager.
+# MultiMonitorBackground: Set background wallpaper (multi monitor aware)
+#       Install: https://github.com/DaveDavenport/MultiMonitorBackground
+# xininfo: To get the width (pixels) of the biggest attached monitor.
+#       Install: https://github.com/DaveDavenport/xininfo
+##
+
+WIDTH=$(xininfo --max-mon-width)
 
 BG_SET_CMD="MultiMonitorBackground -clip -input"
 CURL="curl "

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WIDTH=1980
+WIDTH=1920
 
 BG_SET_CMD="MultiMonitorBackground -clip -input"
 PURITY=sfw
@@ -8,7 +8,7 @@ EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' )
 
 TAGS=( 'nature' 'road' 'forest' 'cities' 'landscapes' )
 
-URL="http://wallgig.net/?order=random&per_page=5&purity\[\]=${PURITY}"
+URL="http://wallgig.net/?order=random&per_page=25&purity\[\]=${PURITY}"
 
 for ET in ${EXCLUDE_TAGS[@]}
 do
@@ -43,7 +43,12 @@ then
     exit 1;
 fi
 
-URL="http://wallgig.net/wallpapers/${IDS[0]}/"
+
+SELECTED_IMAGE=$(( ${random} % ${#IDS[@]} ))
+
+echo ${IDS[${SELECTED_IMAGE}]} >> previous_ids
+
+URL="http://wallgig.net/wallpapers/${IDS[${SELECTED_IMAGE}]}/"
 
 # Get wallpaper url
 echo Fetching url: ${URL}

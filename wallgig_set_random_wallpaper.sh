@@ -1,6 +1,15 @@
 #!/bin/bash
 
 ##
+# wallgig_set_random_wallpaper.sh
+# Written by: qball _at_ gmpclient _dot_ org
+# 
+# Script fetches a random wallpaper from wallgig.net and sets this as background.
+# Preferences on what to display and what not to display can be specified.
+#
+# This script is public domain, you are free todo whatever you like with it.
+# The tools by this script are not!
+#
 # Script uses the following external tools:
 # Curl: To fetch data from the interwebs
 #       Install: See package manager.
@@ -31,20 +40,27 @@ EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' 'car' )
 TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' )
 
 
+##
+# Create cache directory
+##
 if [ -n "${CACHE_DIR}" ] && [ ! -d ${CACHE_DIR} ]
 then
     mkdir -p "${CACHE_DIR}"
 fi
 
 
-
+##
+# Construct Download URL
+##
 URL="http://wallgig.net/?order=random&per_page=40&purity\[\]=${PURITY}"
 
+# Add exclude tags.
 for ET in ${EXCLUDE_TAGS[@]}
 do
     URL="${URL}&exclude_tags\[\]=${ET}"
 done
 
+#Pick a random tag we want to show.
 if [ "${#TAGS[@]}" -gt 0 ]
 then
     RIMG=$(( ${RANDOM} % ${#TAGS[@]}))
@@ -53,6 +69,7 @@ then
     echo "Selected tag: ${TAGS[${RIMG}]}"
 fi
 
+# Set width preferences
 if [ -n ${WIDTH} ]
 then
     URL="${URL}&width=${WIDTH}"
@@ -72,17 +89,21 @@ fi
 
 echo "Got ${#IDS[@]} images."
 
+# Pick random image
 SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
 
 echo ${IDS[${SELECTED_IMAGE}]} >> previous_ids
 
+# Create url for image specific page
 URL="http://wallgig.net/wallpapers/${IDS[${SELECTED_IMAGE}]}/"
 
-# Get wallpaper url
+# Get wallpaper url from the image page
 echo Fetching location for image id: ${IDS[${SELECTED_IMAGE}]}
 WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
 
-
+##
+# If cache is set, lookup image in cache, otherwise fetch it.
+##
 if [ -n "${CACHE_DIR}" ]
 then
     CACHE_FILE="${CACHE_DIR}/${IDS[${SELECTED_IMAGE}]}.jpg"

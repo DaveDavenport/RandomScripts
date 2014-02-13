@@ -83,8 +83,16 @@ IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-w
 # Check results
 if [ ${#IDS[@]} -eq 0 ]
 then
-    echo "No Wallpapers found"
-    exit 1;
+    if [ -n "${CACHE_DIR}" ] 
+    then
+        IMAGE=$(cat previous_ids | sort -n | uniq -c | sort | head -n1 | awk '{print $2}') 
+        echo ${IMAGE} >> previous_ids
+        ${BG_SET_CMD} ${CACHE_DIR}/${IMAGE}.jpg 
+        exit 0;
+    else
+        echo "No Wallpapers found"
+        exit 1;
+    fi
 fi
 
 echo "Got ${#IDS[@]} images."

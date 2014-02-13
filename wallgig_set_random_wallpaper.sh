@@ -44,7 +44,7 @@ EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' 'car' )
 ##
 # Stuff we do want to see
 ##
-TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' )
+TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' 'roads' 'forests' 'landscape' )
 
 
 ##
@@ -129,9 +129,10 @@ if [ ${#IDS[@]} -eq 0 ]
 then
     if [ -n "${CACHE_DIR}" ] 
     then
-        IMAGE=$(get_least_viewed_cache_image )
-        echo ${IMAGE} >> "${PREVIOUS_IDS_LIST}" 
-        cache_set_wallpaper "${IMAGE}"
+        IMAGE_ID=$(get_least_viewed_cache_image )
+        echo "Selected image from cache: ${IMAGE_ID}"
+        echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}" 
+        cache_set_wallpaper "${IMAGE_ID}"
         exit 0;
     else
         echo "No Wallpapers found"
@@ -143,6 +144,7 @@ fi
 SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
 IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
 
+echo "Selected image: ${IMAGE_ID}"
 # Store image
 echo ${IMAGE_ID} >> ${PREVIOUS_IDS_LIST} 
 
@@ -158,11 +160,10 @@ then
     then
         echo Get image from cache: ${CACHE_FILE}
         cache_set_wallpaper "${IMAGE_ID}"
-    elif [ -n "${WP_PATH}" ]
-    then
+    else
         # Get wallpaper url from the image page
         echo Fetching location for image id: ${IMAGE_ID}
-        fetch_image "${IMAGE_ID}" "${CACHE_DIR}"
+        fetch_image "${IMAGE_ID}" "${CACHE_FILE}"
         cache_set_wallpaper "${IMAGE_ID}"
     fi
 else 

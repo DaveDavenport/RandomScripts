@@ -19,14 +19,21 @@
 #       Install: https://github.com/DaveDavenport/xininfo
 ##
 
-
+# Directory of cache dir.
 CACHE_DIR=~/.cache/wallgig/
-
-
+# File holding ids of previous images.
+PREVIOUS_IDS_LIST=~/.wallgig_prev_id
+# Width of the largest monitor.
 WIDTH=$(xininfo --max-mon-width)
-
+# Command to set background. ${BG_SET_CMD} <file>
 BG_SET_CMD="MultiMonitorBackground -clip -input"
+# command to fetch url and output to stdout.
 CURL="curl "
+
+##
+# Wallgig configuration
+##
+
 PURITY=sfw
 
 ##
@@ -48,6 +55,43 @@ then
     mkdir -p "${CACHE_DIR}"
 fi
 
+##
+# @argument a wallgig image ID.
+#
+# Sets background image from Cache 
+##
+function cache_set_wallpaper()
+{
+    if [ -n "${CACHE_DIR}" ]
+    then
+        IMAGE_PATH="${CACHE_DIR}/$1.jpg"
+        ${BG_SET_CMD} "${IMAGE_PATH}" 
+    fi
+}
+
+##
+# sorts, counts and gets the least viewed 
+# cache image.
+#
+# @returns wallgig image id of least viewed image.
+##
+function get_least_viewed_cache_image()
+{
+    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort | head -n1 | awk '{print $2}') 
+    echo "${IMAGE_ID}" 
+}
+
+##
+# @argument wallgig image id.
+#
+# Get the download url for image with id. 
+##
+function fetch_image()
+{
+    URL="http://wallgig.net/wallpapers/$1/"
+    WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
+    ${CURL} "${WP_PATH}" -o "$2" 2>/dev/null
+}
 
 ##
 # Construct Download URL
@@ -85,9 +129,9 @@ if [ ${#IDS[@]} -eq 0 ]
 then
     if [ -n "${CACHE_DIR}" ] 
     then
-        IMAGE=$(cat previous_ids | sort -n | uniq -c | sort | head -n1 | awk '{print $2}') 
-        echo ${IMAGE} >> previous_ids
-        ${BG_SET_CMD} ${CACHE_DIR}/${IMAGE}.jpg 
+        IMAGE=$(get_least_viewed_cache_image )
+        echo ${IMAGE} >> "${PREVIOUS_IDS_LIST}" 
+        cache_set_wallpaper "${IMAGE}"
         exit 0;
     else
         echo "No Wallpapers found"
@@ -95,38 +139,35 @@ then
     fi
 fi
 
-echo "Got ${#IDS[@]} images."
-
 # Pick random image
 SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
+IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
 
-echo ${IDS[${SELECTED_IMAGE}]} >> previous_ids
+# Store image
+echo ${IMAGE_ID} >> ${PREVIOUS_IDS_LIST} 
 
-# Create url for image specific page
-URL="http://wallgig.net/wallpapers/${IDS[${SELECTED_IMAGE}]}/"
-
-# Get wallpaper url from the image page
-echo Fetching location for image id: ${IDS[${SELECTED_IMAGE}]}
-WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
 
 ##
 # If cache is set, lookup image in cache, otherwise fetch it.
 ##
 if [ -n "${CACHE_DIR}" ]
 then
-    CACHE_FILE="${CACHE_DIR}/${IDS[${SELECTED_IMAGE}]}.jpg"
+    CACHE_FILE="${CACHE_DIR}/${IMAGE_ID}.jpg"
 
     if [ -f ${CACHE_FILE} ]
     then
         echo Get image from cache: ${CACHE_FILE}
-        ${BG_SET_CMD} ${CACHE_FILE} 
+        cache_set_wallpaper "${IMAGE_ID}"
     elif [ -n "${WP_PATH}" ]
     then
-        echo Get image: ${WP_PATH}
-        ${CURL} "${WP_PATH}" -o ${CACHE_FILE} 2>/dev/null
-        ${BG_SET_CMD} ${CACHE_FILE} 
+        # Get wallpaper url from the image page
+        echo Fetching location for image id: ${IMAGE_ID}
+        fetch_image "${IMAGE_ID}" "${CACHE_DIR}"
+        cache_set_wallpaper "${IMAGE_ID}"
     fi
 else 
-    ${CURL} "${WP_PATH}" -o /tmp/wallpaper.jpg 2>/dev/null
+    # Get wallpaper url from the image page
+    echo Fetching location for image id: ${IMAGE_ID}
+    fetch_image "${IMAGE_ID}" "/tmp/wallpaper.jpg"
     ${BG_SET_CMD} /tmp/wallpaper.jpg 
 fi

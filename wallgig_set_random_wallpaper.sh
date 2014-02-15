@@ -30,6 +30,9 @@ BG_SET_CMD="MultiMonitorBackground -clip -input"
 # command to fetch url and output to stdout.
 CURL="curl "
 
+# Number of pages to get.
+PAGE_NUMBERS=5
+
 ##
 # Wallgig configuration
 ##
@@ -44,7 +47,7 @@ EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' 'car' )
 ##
 # Stuff we do want to see
 ##
-TAGS=(  'road'  'nature' 'landscapes' 'ocean' 'forest' 'roads' 'forests' 'landscape' )
+TAGS=( 'flags' 'road'  'nature' 'landscapes' 'ocean' 'forest' 'roads' 'forests' 'landscape' )
 
 
 ##
@@ -123,6 +126,14 @@ fi
 echo "Fetching list of images." 
 # Get list of IDS
 IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
+
+
+for page in `seq 1 ${PAGE_NUMBERS}`
+do
+    IDS=( ${IDS[@]} $(${CURL} "$URL&page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") ) 
+done
+
+echo "Got ${#IDS[@]} numbers"
 
 # Check results
 if [ ${#IDS[@]} -eq 0 ]

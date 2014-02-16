@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EDITOR=gvim
+EDITOR=xdg-open
 
 
 function list_directory()

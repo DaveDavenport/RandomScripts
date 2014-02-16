@@ -42,12 +42,12 @@ PURITY=sfw
 ##
 # Stuff we do not want to see
 ##
-EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'cars' 'car' )
+EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'anime+girls' 'cars' 'car' 'cleavage' )
 
 ##
 # Stuff we do want to see
 ##
-TAGS=( 'flags' 'road'  'nature' 'landscapes' 'ocean' 'forest' 'roads' 'forests' 'landscape' )
+TAGS=( 'flags' 'road'  'nature' 'landscapes' 'ocean' 'forest' 'roads' 'forests' 'landscape' 'cityscape')
 
 
 ##
@@ -108,13 +108,17 @@ do
 done
 
 #Pick a random tag we want to show.
-if [ "${#TAGS[@]}" -gt 0 ]
-then
-    RIMG=$(( ${RANDOM} % ${#TAGS[@]}))
-    ET=${TAGS[ ${RIMG}] }
-    URL="${URL}&tags\[\]=${ET}"
-    echo "Selected tag: ${TAGS[${RIMG}]}"
-fi
+
+URL="${URL}&tags%3A("
+for TAG in ${TAGS[@]} 
+do
+    if [ $TAG = ${TAGS[$((${#TAGS[@]}-1))]} ]
+    then
+        URL="${URL}${TAG})"
+    else 
+        URL="${URL}${TAG}+OR+"
+    fi
+done
 
 # Set width preferences
 if [ -n ${WIDTH} ]

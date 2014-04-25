@@ -5,9 +5,9 @@ HOST=github
 
 
 REPOS=$(
-    curl https://api.github.com/users/${USER}/repos | 
+    curl https://api.github.com/users/${USER}/repos |
     grep "full_name"  |
-    sed 's/[ \t]*\"\(.*\)\": \"\(.*\)",/\2/g' 
+    sed 's/[ \t]*\"\(.*\)\": \"\(.*\)",/\2/g'
 )
 
 

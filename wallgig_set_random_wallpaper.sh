@@ -3,7 +3,7 @@
 ##
 # wallgig_set_random_wallpaper.sh
 # Written by: qball _at_ gmpclient _dot_ org
-# 
+#
 # Script fetches a random wallpaper from wallgig.net and sets this as background.
 # Preferences on what to display and what not to display can be specified.
 #
@@ -61,33 +61,33 @@ fi
 ##
 # @argument a wallgig image ID.
 #
-# Sets background image from Cache 
+# Sets background image from Cache
 ##
 function cache_set_wallpaper()
 {
     if [ -n "${CACHE_DIR}" ]
     then
         IMAGE_PATH="${CACHE_DIR}/$1.jpg"
-        ${BG_SET_CMD} "${IMAGE_PATH}" 
+        ${BG_SET_CMD} "${IMAGE_PATH}"
     fi
 }
 
 ##
-# sorts, counts and gets the least viewed 
+# sorts, counts and gets the least viewed
 # cache image.
 #
 # @returns wallgig image id of least viewed image.
 ##
 function get_least_viewed_cache_image()
 {
-    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort | head -n1 | awk '{print $2}') 
-    echo "${IMAGE_ID}" 
+    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort | head -n1 | awk '{print $2}')
+    echo "${IMAGE_ID}"
 }
 
 ##
 # @argument wallgig image id.
 #
-# Get the download url for image with id. 
+# Get the download url for image with id.
 ##
 function fetch_image()
 {
@@ -110,12 +110,12 @@ done
 #Pick a random tag we want to show.
 
 URL="${URL}&tags%3A("
-for TAG in ${TAGS[@]} 
+for TAG in ${TAGS[@]}
 do
     if [ $TAG = ${TAGS[$((${#TAGS[@]}-1))]} ]
     then
         URL="${URL}${TAG})"
-    else 
+    else
         URL="${URL}${TAG}+OR+"
     fi
 done
@@ -127,14 +127,14 @@ then
 fi
 
 
-echo "Fetching list of images." 
+echo "Fetching list of images."
 # Get list of IDS
 IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
 
 
 for page in `seq 1 ${PAGE_NUMBERS}`
 do
-    IDS=( ${IDS[@]} $(${CURL} "$URL&page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") ) 
+    IDS=( ${IDS[@]} $(${CURL} "$URL&page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
 done
 
 echo "Got ${#IDS[@]} numbers"
@@ -142,11 +142,11 @@ echo "Got ${#IDS[@]} numbers"
 # Check results
 if [ ${#IDS[@]} -eq 0 ]
 then
-    if [ -n "${CACHE_DIR}" ] 
+    if [ -n "${CACHE_DIR}" ]
     then
         IMAGE_ID=$(get_least_viewed_cache_image )
         echo "Selected image from cache: ${IMAGE_ID}"
-        echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}" 
+        echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}"
         cache_set_wallpaper "${IMAGE_ID}"
         exit 0;
     else
@@ -161,7 +161,7 @@ IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
 
 echo "Selected image: ${IMAGE_ID}"
 # Store image
-echo ${IMAGE_ID} >> ${PREVIOUS_IDS_LIST} 
+echo ${IMAGE_ID} >> ${PREVIOUS_IDS_LIST}
 
 
 ##
@@ -181,9 +181,9 @@ then
         fetch_image "${IMAGE_ID}" "${CACHE_FILE}"
         cache_set_wallpaper "${IMAGE_ID}"
     fi
-else 
+else
     # Get wallpaper url from the image page
     echo Fetching location for image id: ${IMAGE_ID}
     fetch_image "${IMAGE_ID}" "/tmp/wallpaper.jpg"
-    ${BG_SET_CMD} /tmp/wallpaper.jpg 
+    ${BG_SET_CMD} /tmp/wallpaper.jpg
 fi

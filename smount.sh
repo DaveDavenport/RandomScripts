@@ -6,14 +6,14 @@
 # stucture:
 # <name>=<ssh host>:<path>
 # <name2>=<ssh host2>:<path>
-# 
+#
 # Autocomplete function:
 #
 #_smount.sh()
 #{
-#	COMPREPLY=()
-#	curw=${COMP_WORDS[COMP_CWORD]}
-#	COMPREPLY=($(compgen -W '$(smount.sh -l)' -- $curw))
+# COMPREPLY=()
+# curw=${COMP_WORDS[COMP_CWORD]}
+# COMPREPLY=($(compgen -W '$(smount.sh -l)' -- $curw))
 #}
 #complete -F _smount.sh smount.sh
 #
@@ -152,8 +152,8 @@ function smount()
 
 list_profiles()
 {
-	# should be able todo this in one command.
-	egrep -E "^(.*)=.*$" ${CONF_FILE} | awk -F'=' '{print $1}'
+  # should be able todo this in one command.
+  egrep -E "^(.*)=.*$" ${CONF_FILE} | awk -F'=' '{print $1}'
 }
 
 function check()
@@ -180,8 +180,8 @@ function check()
 while getopts hlvrd:s: OPT; do
     case "$OPT" in
         l)
-           	list_profiles
-			exit 0
+            list_profiles
+      exit 0
             ;;
     esac
 done

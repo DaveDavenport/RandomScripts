@@ -42,7 +42,9 @@ PURITY=sfw
 ##
 # Stuff we do not want to see
 ##
-EXCLUDE_TAGS=( 'women' 'anime' 'anime-girls' 'anime+girls' 'cars' 'car' 'cleavage' )
+EXCLUDE_TAGS=( 'anime' 'anime-girls' 'anime+girls' 'cleavage' )
+
+EXCLUDE_CATEGORIES=( 'People' 'Games' 'Vehicles' 'Anime+%2F+Manga')
 
 ##
 # Stuff we do want to see
@@ -105,6 +107,12 @@ URL="http://wallgig.net/?order=random&per_page=40&purity\[\]=${PURITY}"
 for ET in ${EXCLUDE_TAGS[@]}
 do
     URL="${URL}&exclude_tags\[\]=${ET}"
+done
+
+# Add exclude categories.
+for EC in ${EXCLUDE_CATEGORIES[@]}
+do
+    URL="${URL}&exclude_categories\[\]=${EC}"
 done
 
 #Pick a random tag we want to show.

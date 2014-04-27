@@ -88,7 +88,7 @@ echo "Fetching list of images."
 IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
 
 declare -i CONTINUE=1
-declare -i page=1
+declare -i page=2
 while [[ ${CONTINUE} = 1 ]]
 do
     NEW_IDS=( $(${CURL} "$URL?page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )

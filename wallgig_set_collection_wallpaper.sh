@@ -4,25 +4,22 @@
 # wallgig_set_collection_wallpaper.sh
 # Written by: qball _at_ gmpclient _dot_ org
 #
-# Script fetches a random wallpaper from wallgig.net and sets this as background.
-# Preferences on what to display and what not to display can be specified.
+# Script fetches a random wallpaper from wallgig.net collection and sets this as background.
 #
 # This script is public domain, you are free todo whatever you like with it.
 # The tools by this script are not!
 #
-# Script uses the following external tools:
+# Script uses the following external tools, drop in replacements can be inserted:
 # Curl: To fetch data from the interwebs
 #       Install: See package manager.
 # MultiMonitorBackground: Set background wallpaper (multi monitor aware)
 #       Install: https://github.com/DaveDavenport/MultiMonitorBackground
-# xininfo: To get the width (pixels) of the biggest attached monitor.
-#       Install: https://github.com/DaveDavenport/xininfo
 ##
 
 # Directory of cache dir.
-CACHE_DIR=~/.cache/wallgig/
+CACHE_DIR=~/.cache/wallgig_collection/
 # File holding ids of previous images.
-PREVIOUS_IDS_LIST=~/.wallgig_prev_id
+PREVIOUS_IDS_LIST=~/.wallgig_collection_prev_id
 # Command to set background. ${BG_SET_CMD} <file>
 BG_SET_CMD="MultiMonitorBackground -clip -input"
 # command to fetch url and output to stdout.

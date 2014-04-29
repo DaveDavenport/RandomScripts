@@ -25,6 +25,14 @@ BG_SET_CMD="MultiMonitorBackground -clip -input"
 # command to fetch url and output to stdout.
 CURL="curl "
 
+WALLGIG_FUNCTIONS=wallgig.func
+if [ ! -f ${WALLGIG_FUNCTIONS} ]
+then
+    echo "Failed to find: ${WALLGIG_FUNCTIONS}"
+    exit 1;
+fi 
+source wallgig.func
+
 # The collection to fetch images for.
 COLLECTION="682-qball-s-wallpapers"
 
@@ -37,57 +45,9 @@ then
 fi
 
 ##
-# @argument a wallgig image ID.
-#
-# Sets background image from Cache
-##
-function cache_set_wallpaper()
-{
-    if [ -n "${CACHE_DIR}" ]
-    then
-        IMAGE_PATH="${CACHE_DIR}/$1.jpg"
-        ${BG_SET_CMD} "${IMAGE_PATH}"
-    fi
-}
-
-##
-# sorts, counts and gets the least viewed
-# cache image.
-#
-# @returns wallgig image id of least viewed image.
-##
-function get_least_viewed_cache_image()
-{
-    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort | head -n1 | awk '{print $2}')
-    echo "${IMAGE_ID}"
-}
-
-##
-# @argument wallgig image id.
-#
-# Get the download url for image with id.
-##
-function fetch_image()
-{
-    URL="http://wallgig.net/wallpapers/$1/"
-    WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
-    ${CURL} "${WP_PATH}" -o "$2" 2>/dev/null
-}
-
-##
-# Download list of wallpaper ids from url: $1
-##
-function download_ids ()
-{
-    local curl="$1"
-    ${CURL} "$curl" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g"
-}
-
-##
 # Construct Download URL
 ##
 URL="http://wallgig.net/collections/${COLLECTION}"
-
 
 echo "Fetching list of images."
 # Get list of IDS
@@ -130,31 +90,4 @@ fi
 SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
 IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
 
-echo "Selected image: ${IMAGE_ID}"
-# Store image
-echo ${IMAGE_ID} >> ${PREVIOUS_IDS_LIST}
-
-
-##
-# If cache is set, lookup image in cache, otherwise fetch it.
-##
-if [ -n "${CACHE_DIR}" ]
-then
-    CACHE_FILE="${CACHE_DIR}/${IMAGE_ID}.jpg"
-
-    if [ -f ${CACHE_FILE} ]
-    then
-        echo Get image from cache: ${CACHE_FILE}
-        cache_set_wallpaper "${IMAGE_ID}"
-    else
-        # Get wallpaper url from the image page
-        echo Fetching location for image id: ${IMAGE_ID}
-        fetch_image "${IMAGE_ID}" "${CACHE_FILE}"
-        cache_set_wallpaper "${IMAGE_ID}"
-    fi
-else
-    # Get wallpaper url from the image page
-    echo Fetching location for image id: ${IMAGE_ID}
-    fetch_image "${IMAGE_ID}" "/tmp/wallpaper.jpg"
-    ${BG_SET_CMD} /tmp/wallpaper.jpg
-fi
+set_image "${IMAGE_ID}"

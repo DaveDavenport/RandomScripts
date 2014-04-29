@@ -99,9 +99,19 @@ function fetch_image()
 }
 
 ##
+# Download list of wallpaper ids from url: $1
+##
+function download_ids ()
+{
+    local curl="$1"
+    ${CURL} "$curl" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g"
+}
+
+##
 # Construct Download URL
 ##
 URL="http://wallgig.net/?order=random&per_page=40&purity\[\]=${PURITY}"
+
 
 # Add exclude tags.
 for ET in ${EXCLUDE_TAGS[@]}
@@ -134,15 +144,14 @@ then
     URL="${URL}&width=${WIDTH}"
 fi
 
-
 echo "Fetching list of images."
 # Get list of IDS
-IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
+IDS=( $(download_ids "$URL") )
 
 
 for page in `seq 1 ${PAGE_NUMBERS}`
 do
-    IDS=( ${IDS[@]} $(${CURL} "$URL&page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
+    IDS=( ${IDS[@]} $(download_ids "$URL&page=$page") )
 done
 
 echo "Got ${#IDS[@]} numbers"

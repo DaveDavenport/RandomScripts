@@ -75,6 +75,15 @@ function fetch_image()
 }
 
 ##
+# Download list of wallpaper ids from url: $1
+##
+function download_ids ()
+{
+    local curl="$1"
+    ${CURL} "$curl" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g"
+}
+
+##
 # Construct Download URL
 ##
 URL="http://wallgig.net/collections/${COLLECTION}"
@@ -82,13 +91,12 @@ URL="http://wallgig.net/collections/${COLLECTION}"
 
 echo "Fetching list of images."
 # Get list of IDS
-IDS=( $(${CURL} "$URL" 2>/dev/null | grep "data-wallpaper-id" | sed  "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
-
+IDS=( $(download_ids "$URL")  )
 declare -i CONTINUE=1
 declare -i page=2
 while [[ ${CONTINUE} = 1 ]]
 do
-    NEW_IDS=( $(${CURL} "$URL?page=$page" 2>/dev/null | grep "data-wallpaper-id" | sed "s|.*data-wallpaper-id='\(.*\)'.*|\1|g") )
+    NEW_IDS=( $(download_ids "$URL?page=$page") ) 
     echo "Got ${#NEW_IDS[@]} images: $page $URL&page=$page"
     if [[ ${#NEW_IDS[@]} = 0 ]]
     then
@@ -98,6 +106,7 @@ do
     fi
     page=$page+1
 done
+
 
 echo "Got ${#IDS[@]} numbers"
 

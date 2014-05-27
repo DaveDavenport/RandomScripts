@@ -35,7 +35,7 @@ function print_menu()
 ##
 function start()
 {
-    print_menu | rofi -dmenu -prompt "Bang:" 
+    print_menu | rofi -dmenu -p "Bang:" 
 }
 
 
@@ -45,6 +45,14 @@ value="$(start)"
 # Split input.
 choice=${value:0:1}
 input=${value:1}
+
+##
+# Cancelled? bail out
+##
+if test -z ${choice}
+then
+    exit
+fi
 
 # check if choice exists
 if test ${COMMANDS[$choice]+isset}

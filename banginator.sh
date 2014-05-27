@@ -1,47 +1,57 @@
 #!/usr/bin/env bash
 
-EMAIL="thunderbird -compose \"to=\${email}\""
-WEB="firefox \${url}"
+declare -A TITLES
+declare -A COMMANDS
 
+###
+# List of defined 'bangs'
+###
 
+COMMANDS['@']="thunderbird -compose \"to=\${input}\""
+TITLES['@']="e-mail"
 
-function prompt() {
-    printf "%s\n" "$@" | rofi -dmenu -p "Bang:"
-}
+COMMANDS["!"]="firefox \"\${input}\""
+TITLES["!"]="Web browser"
 
+COMMANDS["/"]="firefox --search \"\${input}\""
+TITLES["/"]="Web search"
 
+###
+# do not edit below
+###
 
-function load_url()
+##
+# Generate menu
+##
+function print_menu()
 {
-    echo "Load url: $1"
-    url="$1"
-    eval "${WEB}"
+    for key in ${!TITLES[@]}
+    do
+        echo "$key    ${TITLES[$key]}"
+    done
 }
-
-function email()
-{
-    echo "E-mail: $1"
-    email="$1"
-    eval "${EMAIL}"
-}
-
+##
+# Show rofi.
+##
 function start()
 {
-    menu=(
-        "!.  Web"
-        "@.  E-mail"
-    )
-
-    prompt "${menu[@]}"
-
+    print_menu | rofi -dmenu -prompt "Bang:" 
 }
 
-value="$(start)"
-echo "${value}"
-case "${value}" in
 
-    !*)
-        load_url "${value#!}";;
-    @*)
-        email "${value#@}";;
-esac
+# Run it
+value="$(start)"
+
+# Split input.
+choice=${value:0:1}
+input=${value:1}
+
+# check if choice exists
+if test ${COMMANDS[$choice]+isset}
+then
+    # Execute the choice
+    eval echo "Executing: ${COMMANDS[$choice]}"
+    eval ${COMMANDS[$choice]}
+else
+    echo "Unknown command: ${choice}" | rofi -dmenu -p "error"
+fi

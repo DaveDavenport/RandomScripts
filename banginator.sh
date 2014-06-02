@@ -7,15 +7,17 @@ declare -A COMMANDS
 # List of defined 'bangs'
 ###
 
-COMMANDS['@']="thunderbird -compose \"to=\${input}\""
-TITLES['@']="e-mail"
+COMMANDS['!tb']="thunderbird -compose \"to=\${input}\""
+TITLES['!tb']="e-mail"
 
-COMMANDS["!"]="firefox \"\${input}\""
-TITLES["!"]="Web browser"
+COMMANDS["!ff"]="firefox \"\${input}\""
+TITLES["!ff"]="Web browser"
 
-COMMANDS["/"]="firefox --search \"\${input}\""
-TITLES["/"]="Web search"
+COMMANDS["!g"]="firefox --search \"\${input}\""
+TITLES["!g"]="Web search"
 
+COMMANDS["!gi"]="firefox --search \"!gi \${input}\""
+TITLES["!gi"]="Image search"
 ###
 # do not edit below
 ###
@@ -43,8 +45,10 @@ function start()
 value="$(start)"
 
 # Split input.
-choice=${value:0:1}
-input=${value:1}
+# grab upto first space.
+choice=${value%%\ *}
+# graph remainder, minus space.
+input=${value:$((${#choice}+1))}
 
 ##
 # Cancelled? bail out

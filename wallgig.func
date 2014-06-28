@@ -48,7 +48,8 @@ function get_least_viewed_cache_image()
 function fetch_image()
 {
     URL="http://wallgig.net/wallpapers/$1/"
-    WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" width.*|\1|')
+    WP_PATH=$(${CURL} "$URL" 2>/dev/null | grep \<img.*img-wallpaper | sed 's|.*src="\(.*\)" style.*|\1|')
+    echo ${WP_PATH}
     ${CURL} "${WP_PATH}" -o "$2" 2>/dev/null
 }
 

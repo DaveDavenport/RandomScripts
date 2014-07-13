@@ -36,8 +36,14 @@ function cache_set_wallpaper()
 ##
 function get_least_viewed_cache_image()
 {
-    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort | head -n1 | awk '{print $2}')
+    IMAGE_ID=$(cat "${PREVIOUS_IDS_LIST}" | sort -n | uniq -c | sort -n | head -n1 | awk '{print $2}')
     echo "${IMAGE_ID}"
+}
+
+function get_random_cache_image()
+{
+    IMAGE_ID=$(ls "${CACHE_DIR}" | sort -R | head -n1)
+    echo "${IMAGE_ID%%.*}"
 }
 
 ##

@@ -44,38 +44,41 @@ then
     mkdir -p "${CACHE_DIR}"
 fi
 
-##
-# Construct Download URL
-##
-URL="http://wallgig.net/collections/${COLLECTION}"
+if [ -z "${OFFLINE}" ]
+then
+    ##
+    # Construct Download URL
+    ##
+    URL="http://wallgig.net/collections/${COLLECTION}"
 
-echo "Fetching list of images."
-# Get list of IDS
-IDS=( $(download_ids "$URL")  )
-declare -i CONTINUE=1
-declare -i page=2
-while [[ ${CONTINUE} = 1 ]]
-do
-    NEW_IDS=( $(download_ids "$URL?page=$page") ) 
-    echo "Got ${#NEW_IDS[@]} images: $page $URL&page=$page"
-    if [[ ${#NEW_IDS[@]} = 0 ]]
-    then
-        CONTINUE=2;
-    else
-        IDS=( ${IDS[@]} ${NEW_IDS[@]} ) 
-    fi
-    page=$page+1
-done
+    echo "Fetching list of images."
+    # Get list of IDS
+    IDS=( $(download_ids "$URL")  )
+    declare -i CONTINUE=1
+    declare -i page=2
+    while [[ ${CONTINUE} = 1 ]]
+    do
+        NEW_IDS=( $(download_ids "$URL?page=$page") ) 
+        echo "Got ${#NEW_IDS[@]} images: $page $URL&page=$page"
+        if [[ ${#NEW_IDS[@]} = 0 ]]
+        then
+            CONTINUE=2;
+        else
+            IDS=( ${IDS[@]} ${NEW_IDS[@]} ) 
+        fi
+        page=$page+1
+    done
 
 
-echo "Got ${#IDS[@]} numbers"
+    echo "Got ${#IDS[@]} numbers"
+fi
 
 # Check results
 if [ ${#IDS[@]} -eq 0 ]
 then
     if [ -n "${CACHE_DIR}" ]
     then
-        IMAGE_ID=$(get_least_viewed_cache_image )
+        IMAGE_ID=$(get_random_cache_image )
         echo "Selected image from cache: ${IMAGE_ID}"
         echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}"
         cache_set_wallpaper "${IMAGE_ID}"

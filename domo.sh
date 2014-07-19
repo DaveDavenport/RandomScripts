@@ -28,17 +28,39 @@ function get_range_value()
 function set_lights()
 {
     case "$(get_range_value)" in
-        0.*) echo "0" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        10.*) echo "2" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        20.*) echo "4" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        30.*) echo "8" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        40.*) echo "16" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        50.*) echo "32" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        60.*) echo "64" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        70.*) echo "128" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        80.*) echo "256" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        90.*) echo "512" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        100.*) echo "1024" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
+        0.*) echo "0" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: off."
+            ;;
+        10.*) echo "2" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 10%."
+            ;;
+        20.*) echo "4" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 20%."
+            ;;
+        30.*) echo "8" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 30%."
+            ;;
+        40.*) echo "16" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 40%."
+            ;;
+        50.*) echo "32" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 50%."
+            ;;
+        60.*) echo "64" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 60%."
+            ;;
+        70.*) echo "128" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 70%."
+            ;;
+        80.*) echo "256" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 90%."
+            ;;
+        90.*) echo "512" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 90%."
+            ;;
+        100.*) echo "1024" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 100%."
+            ;;
     esac
 }
 function set_maximum()
@@ -118,17 +140,39 @@ function menu()
     )
 
     case "$(prompt "${menu[@]}")" in
-        "Lights on/off") echo "toggle"  "switch" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        10.*) echo "2" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        20.*) echo "4" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        30.*) echo "8" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        40.*) echo "16" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        50.*) echo "32" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        60.*) echo "64" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        70.*) echo "128" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        80.*) echo "256" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        90.*) echo "512" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
-        100.*) echo "1024" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};;
+        "Lights on/off") echo "toggle"  "switch" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+        notify-send "Domotica" "Toggle light."
+            ;;
+        10.*) echo "2" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 10%."
+            ;;
+        20.*) echo "4" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 20%."
+            ;;
+        30.*) echo "8" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 30%."
+            ;;
+        40.*) echo "16" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 40%."
+            ;;
+        50.*) echo "32" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 50%."
+            ;;
+        60.*) echo "64" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 60%."
+            ;;
+        70.*) echo "128" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 70%."
+            ;;
+        80.*) echo "256" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 80%."
+            ;;
+        90.*) echo "512" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 90%."
+            ;;
+        100.*) echo "1024" | nc -q0 ${LIGHT_HOST} ${LIGHT_PORT};
+            notify-send "Domotica" "Set light level: 100%."
+            ;;
         \%.*) set_lights;;
         Configure)
                 configure

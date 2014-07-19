@@ -73,24 +73,32 @@ then
     echo "Got ${#IDS[@]} numbers"
 fi
 
-# Check results
-if [ ${#IDS[@]} -eq 0 ]
+if [ -n "${DOWNLOAD}" ]
 then
-    if [ -n "${CACHE_DIR}" ]
+    for IMAGE_ID in ${IDS[@]}
+    do
+        set_image "${IMAGE_ID}"
+    done
+else
+    # Check results
+    if [ ${#IDS[@]} -eq 0 ]
     then
-        IMAGE_ID=$(get_random_cache_image )
-        echo "Selected image from cache: ${IMAGE_ID}"
-        echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}"
-        cache_set_wallpaper "${IMAGE_ID}"
-        exit 0;
-    else
-        echo "No Wallpapers found"
-        exit 1;
+        if [ -n "${CACHE_DIR}" ]
+        then
+            IMAGE_ID=$(get_random_cache_image )
+            echo "Selected image from cache: ${IMAGE_ID}"
+            echo ${IMAGE_ID} >> "${PREVIOUS_IDS_LIST}"
+            cache_set_wallpaper "${IMAGE_ID}"
+            exit 0;
+        else
+            echo "No Wallpapers found"
+            exit 1;
+        fi
     fi
+
+    # Pick random image
+    SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
+    IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
+
+    set_image "${IMAGE_ID}"
 fi
-
-# Pick random image
-SELECTED_IMAGE=$(( ${RANDOM} % ${#IDS[@]} ))
-IMAGE_ID="${IDS[${SELECTED_IMAGE}]}"
-
-set_image "${IMAGE_ID}"

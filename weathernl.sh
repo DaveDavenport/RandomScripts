@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LATITUDE=52.06
+LATITUDE=52.09
 LONGITUDE=5.11
 
 NOW=$(date +%s)
@@ -29,14 +29,16 @@ function get_prediction()
                 RAINING=true
             fi
         fi
+        # Bash does not like 0 padded integers.
+        VALUE=$(echo ${SM[0]} | bc )
 
         if [ ${DTIME} -gt 0 ]
         then
-            if ${RAINING} && [ ${SM[0]} -eq 0 ] && [ ${STOP} -eq 0 ]
+            if ${RAINING} && [ ${VALUE} -eq 0 ] && [ ${STOP} -eq 0 ]
             then
                 STOP=${DTIME}
             fi
-            if ! ${RAINING} && [ ${SM[0]} -gt 0 ] && [ ${START} -eq 0 ]
+            if ! ${RAINING} && [ ${VALUE} -gt 0 ] && [ ${START} -eq 0 ]
             then
                 START=${DTIME}
             fi
@@ -56,11 +58,13 @@ then
     else
         echo "It won't stop for the next 2 hours."
     fi
-else
+fi
+if ! ${RAINING}
+then
     echo "It is not raining"
-    if [ ${STOP} -gt 0 ]
+    if [ ${START} -gt 0 ]
     then
-        echo "It will start in ${STOP} minutes."
+        echo "It will start in ${START} minutes."
     else
         echo "It won't start for the next 2 hours."
     fi

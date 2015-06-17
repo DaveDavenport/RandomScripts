@@ -1,6 +1,6 @@
 # ! /usr/bin/env bash 
 
-LIGHT_HOST=192.150.0.109
+LIGHT_HOST=192.150.0.112
 LIGHT_PORT=8888
 
 prompt() {

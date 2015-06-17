@@ -19,7 +19,8 @@ function get_prediction()
     while read A
     do
         SM=(${A//\|/ })
-        
+
+        echo $A        
         STIME=$(date +%s -d ${SM[1]})
         DTIME=$(( ($STIME-$NOW)/60 ))
         if [ ${DTIME} -le 0 ] && [ ${DTIME} -gt -5 ]
